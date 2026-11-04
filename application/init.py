@@ -1,0 +1,1 @@
+"""CampusFlow AI: one-week classroom allocation and movement proxy."""
