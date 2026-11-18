@@ -96,8 +96,6 @@ Kết quả pytest được lưu nguyên văn trong log: **107 passed in 18.78s*
 
 Mã tham khảo, UI, tests và tài liệu có hỗ trợ đáng kể từ Codex trong hội thoại hiện tại. Không tự nhận phần đó là A–D đã viết hoặc nghiệm thu. Phần kế hoạch giao việc trong vault là việc nhóm cần nhận, đọc, kiểm chứng và ghi bàn giao thực.
 
-[[07_Nhat_ky/AI/AI-001_Ho_tro_Codex]] mới là tóm tắt, chưa có raw transcript đầy đủ. Trước khi nộp, nhóm cần xuất hội thoại gốc, ghi nhận xét/giữ-sửa-bỏ và liên kết việc áp dụng. Không lấy prompt gợi ý hoặc một nhật ký mô phỏng làm tương tác thật.
-
 ## 10. Hạn chế và hướng phát triển
 
 Chưa xác minh trên máy nhóm/Windows/macOS trừ khi có biên bản bổ sung. Chưa có dữ liệu thật hay danh tính, giảng viên, lịch nhiều tuần, năng lực cổng/đường đi. Không có lưu trữ bền vững; ghế dư chưa tối ưu riêng. Solver có thể chỉ FEASIBLE hoặc UNKNOWN khi timeout.
