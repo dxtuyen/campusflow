@@ -23,11 +23,17 @@ def test_counts_schema_and_sunday(difficulty, guarantee):
     assert len(d.classes) == 30 and len(d.rooms) == 6
     assert not validate_inputs(d.classes, d.rooms)
     for cls in d.classes:
-        assert set(cls.allowed_days) <= set(DAYS) and set(cls.allowed_sessions) <= set(SESSIONS)
+        assert set(cls.allowed_days) <= set(DAYS) and set(cls.allowed_sessions) <= set(
+            SESSIONS
+        )
     if guarantee:
         assert result.guaranteed_feasible
-        assert not validate_schedule(result.witness, d.classes, d.rooms, ScheduleConfig())
-        assert solve_cp_sat(d.classes, d.rooms, ScheduleConfig(time_limit_seconds=2)).complete
+        assert not validate_schedule(
+            result.witness, d.classes, d.rooms, ScheduleConfig()
+        )
+        assert solve_cp_sat(
+            d.classes, d.rooms, ScheduleConfig(time_limit_seconds=2)
+        ).complete
     else:
         assert not result.guaranteed_feasible and not result.witness
 
@@ -41,12 +47,25 @@ def test_does_not_mutate_global_random_state():
 def test_guaranteed_slot_capacity_boundary():
     result = generate_synthetic_dataset(48, 2, guaranteed_feasible=True)
     assert len(result.witness) == 48
-    assert not validate_schedule(result.witness, result.dataset.classes, result.dataset.rooms, ScheduleConfig())
+    assert not validate_schedule(
+        result.witness, result.dataset.classes, result.dataset.rooms, ScheduleConfig()
+    )
     with pytest.raises(ValueError, match="slot"):
         generate_synthetic_dataset(49, 2, guaranteed_feasible=True)
 
 
-@pytest.mark.parametrize("kwargs", [{"num_classes": 9}, {"num_classes": 101}, {"num_rooms": 1}, {"num_rooms": 21}, {"seed": 1.5}, {"difficulty": "bad"}, {"guaranteed_feasible": "yes"}])
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"num_classes": 9},
+        {"num_classes": 101},
+        {"num_rooms": 1},
+        {"num_rooms": 101},
+        {"seed": 1.5},
+        {"difficulty": "bad"},
+        {"guaranteed_feasible": "yes"},
+    ],
+)
 def test_invalid_parameters(kwargs):
     with pytest.raises(ValueError):
         generate_synthetic_dataset(**kwargs)
@@ -54,7 +73,21 @@ def test_invalid_parameters(kwargs):
 
 def test_cli_export_and_real_unknown_status(tmp_path, capsys):
     path = tmp_path / "generated.xlsx"
-    main(["--classes", "10", "--rooms", "2", "--seed", "42", "--output", str(path), "--check", "--time-limit", "0.000000001"])
+    main(
+        [
+            "--classes",
+            "10",
+            "--rooms",
+            "2",
+            "--seed",
+            "42",
+            "--output",
+            str(path),
+            "--check",
+            "--time-limit",
+            "0.000000001",
+        ]
+    )
     d = read_dataset(path)
     assert len(d.classes) == 10 and len(d.rooms) == 2
     output = capsys.readouterr().out
@@ -64,7 +97,18 @@ def test_cli_export_and_real_unknown_status(tmp_path, capsys):
 
 def test_cli_guaranteed_schema_and_feasibility(tmp_path, capsys):
     path = tmp_path / "generated.xlsx"
-    main(["--classes", "10", "--rooms", "2", "--guaranteed-feasible", "--check", "--output", str(path)])
+    main(
+        [
+            "--classes",
+            "10",
+            "--rooms",
+            "2",
+            "--guaranteed-feasible",
+            "--check",
+            "--output",
+            str(path),
+        ]
+    )
     text = capsys.readouterr().out
     assert "witness independently validated" in text
     assert "CP-SAT: OPTIMAL" in text or "CP-SAT: FEASIBLE" in text
