@@ -1,0 +1,15 @@
+﻿case_id,dataset,class_count,room_count,algorithm,allow_saturday,lambda,time_limit_seconds,status,complete,hard_violations,P,N_Sat,J,saturday_classes,unused_seats,runtime_seconds,best_bound
+basic,Basic,8,3,Greedy,True,3,10,FEASIBLE,True,0,120,0,120,0,125,0.013838883998687379,
+basic,Basic,8,3,CP-SAT,True,3,10,OPTIMAL,True,0,120,0,120,0,125,0.07864903099834919,120.0
+congestion,Congestion,24,6,Greedy,True,3,10,FEASIBLE,True,0,390,0,390,0,195,0.022631349005678203,
+congestion,Congestion,24,6,CP-SAT,True,3,10,OPTIMAL,True,0,375,0,375,0,715,1.2810109240017482,375.0
+saturday-lambda-0,Saturday trade-off,4,1,Greedy,True,0,10,FEASIBLE,True,0,100,200,100,2,0,0.0008249020029325038,
+saturday-lambda-0,Saturday trade-off,4,1,CP-SAT,True,0,10,OPTIMAL,True,0,100,200,100,2,0,0.006509550999908242,100.0
+saturday-lambda-3,Saturday trade-off,4,1,Greedy,True,3,10,FEASIBLE,True,0,200,0,200,0,0,0.0008282830021926202,
+saturday-lambda-3,Saturday trade-off,4,1,CP-SAT,True,3,10,OPTIMAL,True,0,200,0,200,0,0,0.00630268100212561,200.0
+saturday-lambda-10,Saturday trade-off,4,1,Greedy,True,10,10,FEASIBLE,True,0,200,0,200,0,0,0.0008229649974964559,
+saturday-lambda-10,Saturday trade-off,4,1,CP-SAT,True,10,10,OPTIMAL,True,0,200,0,200,0,0,0.006510335995699279,200.0
+weekdays-only,Saturday trade-off,4,1,Greedy,False,3,10,FEASIBLE,True,0,200,0,200,0,0,0.0003758650054805912,
+weekdays-only,Saturday trade-off,4,1,CP-SAT,False,3,10,OPTIMAL,True,0,200,0,200,0,0,0.0031557490001432598,200.0
+infeasible,Infeasible,3,2,Greedy,True,3,10,FAILED,False,1,,,,,,0.00013484599912771955,
+infeasible,Infeasible,3,2,CP-SAT,True,3,10,INFEASIBLE,False,,,,,,,0.0015618079996784218,

@@ -1,14 +1,27 @@
-# CampusFlow — hồ sơ bàn giao
+# CampusFlow · Tài liệu báo cáo
 
-| File | Nội dung |
-|---|---|
-| `BC01_Su_can_thiet.pdf` | Bản thảo phân tích nhu cầu và phạm vi |
-| `BC02_San_pham.pdf` | Bản thảo mô hình, kiến trúc, kiểm thử và kết quả |
-| `CampusFlow-source.zip` | Source app, tests, cấu hình, Excel mẫu và tài liệu |
-| `evidence/` | CSV/JSON thực nghiệm, log pytest/Chrome và kiểm tra source sau giải nén |
+- [Báo cáo 1 · Sự cần thiết của hệ thống](BC01_Su_can_thiet.md)
+- [Báo cáo 2 · Xếp lịch và đánh giá kết quả](BC02_San_pham.md)
+- [Bảng kết quả thực nghiệm](evidence/experiments.csv), [lịch chi tiết và phiên bản thư viện](evidence/experiments.json), [kết quả kiểm thử](evidence/pytest.txt)
 
-Giải nén source vào thư mục mới, mở thư mục `campusflow` chứa `app.py`, cài dependency theo README rồi chạy `./run.sh` (Linux/NixOS) hoặc `python -m streamlit run app.py` trong môi trường đã cài. Source không kèm `.venv`.
+## Chạy thử từ mã nguồn
 
-Phạm vi: phân phòng/xếp ca toàn trường trong một tuần mẫu; nhiều lớp có thể học cùng ca ở các phòng khác nhau. Tối ưu `J = P + λ × N_Sat`, tải tính từ tổng lượt đăng ký của các lớp. Chưa xét lịch giảng viên/nhóm sinh viên và không đo ùn tắc thực tế.
+Từ thư mục gốc của dự án, tạo môi trường Python và chạy ứng dụng trên Linux bằng các lệnh sau.
 
-Hai báo cáo còn là bản thảo. Trước khi nộp, nhóm điền thông tin lớp/thành viên, xác nhận rubric/hạn nộp, rà kết quả và bổ sung nhật ký AI thật. Không dùng bằng chứng của bản tham khảo để tự nhận thành viên đã hoàn thành việc.
+```bash
+python -m venv .venv
+.venv/bin/python -m pip install -r requirements.lock
+.venv/bin/python -m pip install --no-deps -e .
+bash run.sh
+```
+
+Để thử chính sách thứ Bảy, vào **Dữ liệu → Bộ mẫu**, chọn **Đánh đổi thứ Bảy** rồi bấm **Dùng bộ mẫu**. Trong **Lịch học**, mở **Chính sách**, chọn **Cho phép thứ Bảy** và đặt **Ưu tiên tránh thứ Bảy** ở mức **Không ưu tiên**. Bấm **Tạo lịch**, ghi lại cao điểm và số buổi thứ Bảy, rồi lặp lại với mức **Vừa**.
+
+Để chạy lại thực nghiệm và kiểm thử từ thư mục gốc, dùng hai lệnh sau.
+
+```bash
+.venv/bin/python -m application.experiments --output reports/experiments
+.venv/bin/python -m pytest
+```
+
+Theo đề bài, hồ sơ nộp còn cần mã nguồn, bản demo và nhật ký sử dụng AI của nhóm. Thư mục này chứa hai báo cáo Markdown, ảnh minh họa và kết quả kiểm chứng.

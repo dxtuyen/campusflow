@@ -1,112 +1,48 @@
-# Báo cáo 2 · Sản phẩm và thực nghiệm
+# CampusFlow · Xếp lịch và đánh giá kết quả
 
-## 1. Tổng quan và chức năng
+## 1. Từ danh sách lớp đến thời khóa biểu
 
-CampusFlow AI hỗ trợ gán các buổi học vào phòng, ngày và ca trong một tuần mẫu, tối ưu cao điểm di chuyển đại diện và hạn chế thứ Bảy. Công nghệ là Python, Streamlit, OR-Tools CP-SAT, Pandas, Plotly, openpyxl và pytest. Dữ liệu giả lập dùng để kiểm chứng/giải thích, chưa phải dữ liệu đã thu thập tại trường.
+Ở mục **Dữ liệu**, người dùng chọn một bộ mẫu hoặc tải tệp Excel gồm hai trang tính. Trang `Classes` ghi từng buổi học, sĩ số và các ngày, ca được phép. Trang `Rooms` ghi mã phòng và sức chứa. Khi dữ liệu hợp lệ, người dùng mở **Lịch học**, chọn chính sách thứ Bảy rồi bấm **Tạo lịch**. Lịch đầy đủ có thể lọc theo phòng, theo ngày và xuất ra Excel hoặc CSV. Mục **Phân tích** cho phép xem khoảng chuyển ca đông nhất và so sánh các chính sách.
 
-Ba tab chính là Dữ liệu (mẫu/import/validation), Lịch học (tạo lịch, bộ lọc phòng/ngày, tải file) và Phân tích AI (heatmap, thanh đối chiếu, luồng ra/vào và ba chính sách thứ Bảy). Có bốn bộ mẫu cố định; bộ sinh theo seed là phần bổ sung sau core.
+![Lưới thời khóa biểu theo ngày và ca](schedule.png)
 
-## 2. Kiến trúc và hợp đồng dữ liệu
+*Hình 1. Trong cùng một ô ngày–ca có thể có nhiều buổi học nếu mỗi buổi dùng một phòng riêng.*
 
-`app.py` chỉ khởi tạo và ghép ba tab. `ui/` giữ widgets/state; `workflows.py` điều phối Greedy/CP-SAT và ba chính sách; thuật toán, validator và metrics là các hàm Python không phụ thuộc Streamlit. `data_io.py` lo Excel; `sample_data.py` lo dữ liệu cố định; `presentation.py`/`analysis.py` dựng hình và bảng.
+Ứng dụng viết bằng Python. Giao diện Streamlit nhận tệp qua `data_io.py` và chuyển dữ liệu cho `workflows.py` để chạy Greedy và CP-SAT với cùng chính sách. Hai thuật toán trả về danh sách buổi, phòng, ngày và ca. Phần kiểm tra lịch và tính chỉ số chạy độc lập với giao diện, nên cùng một bộ dữ liệu có thể dùng để trình diễn trên web và chạy thực nghiệm từ dòng lệnh.
 
-Các dataclass dùng chung gồm ClassSession, Room, Assignment, Dataset, ScheduleConfig, ScheduleResult, ComparisonRun và PolicyExperiment. Kết quả gắn input/config đã dùng để UI không công bố lịch cũ cho chính sách mới. Chi tiết và sơ đồ tại [[01_Dieu_hanh/08_Kien_truc]].
+## 2. Mô hình và cách giải
 
-Không có database. Session chỉ là trạng thái trình duyệt; lưu lâu dài hiện qua Excel/CSV do người dùng tải. Source snapshot kèm vault là bản đối chiếu từ `campusflow_demo` tại thời điểm đóng gói. Repo `campusflow` người dùng tự triển khai không được công cụ này chỉnh sửa hoặc mặc nhiên coi là đã kiểm thử.
+Với mỗi buổi học, mô hình chỉ giữ những phương án có phòng đủ chỗ, đúng ngày và ca cho phép. Khi người dùng chọn chỉ học ngày thường, mô hình loại thứ Bảy ngay ở bước này. Biến nhị phân `x[c,r,d,s]` bằng 1 khi buổi c học tại phòng r vào ngày d, ca s. Mỗi buổi phải chọn đúng một phương án. Trong cùng ngày và ca, mỗi phòng chỉ nhận tối đa một buổi.
 
-## 3. Phát biểu bài toán AI
+Để tính cao điểm, ứng dụng cộng sĩ số tất cả các lớp học trong từng ca. Giữa hai ca liên tiếp, số lượt ra vào bằng tổng sĩ số ca trước cộng tổng sĩ số ca sau. Đầu ngày chỉ tính lượt đến ca đầu, cuối ngày chỉ tính lượt rời ca cuối. Gọi **P** là số lượt lớn nhất trong các khoảng đó trên toàn tuần và **N_Sat** là tổng sĩ số các buổi thứ Bảy. Bộ giải tìm lịch có **J = P + λ × N_Sat** nhỏ nhất. Khi cho phép học thứ Bảy, hệ số λ thể hiện mức ưu tiên tránh xếp lớp vào ngày này.
 
-Mỗi bản ghi c là một buổi cần xếp một lần; n_c là số lượt đăng ký. Mỗi phòng r có capacity. Một slot là cặp ngày d và ca s. Chỉ tạo biến nhị phân `x[c,r,d,s]` cho phòng đủ chỗ và ngày/ca hợp lệ.
+Greedy xếp buổi ít lựa chọn trước, ưu tiên lớp đông hơn khi số lựa chọn bằng nhau. Ở mỗi bước, thuật toán chọn vị trí làm J tăng ít nhất và giữ nguyên những buổi đã xếp. CP-SAT của OR-Tools có thể dùng lịch Greedy làm gợi ý ban đầu rồi tiếp tục tìm trên toàn bộ mô hình. Sau khi có lịch đầy đủ, ứng dụng kiểm tra lại từng buổi và tính lại các chỉ số từ lịch đã xếp.
 
-- H1: với mỗi buổi, tổng các biến ứng viên bằng 1.
-- H2: với mỗi phòng/ngày/ca, tổng các biến chiếm phòng không quá 1.
-- H3–H4: sức chứa và allowed_days/allowed_sessions được bảo đảm qua miền biến.
-- H5: không tạo biến Sunday.
-- H6: khi chỉ học ngày thường, loại Sat.
-- H7: mọi lịch đầy đủ được kiểm chứng lại bằng Python độc lập.
+## 3. Kết quả trên bốn bộ dữ liệu mẫu
 
-Hai phòng khác nhau có thể học cùng slot. Không bổ sung ràng buộc sinh viên/giảng viên khi dữ liệu không có các thuộc tính đó.
+Thực nghiệm gồm bảy trường hợp trên bốn bộ dữ liệu giả lập. Mỗi trường hợp chạy cả hai thuật toán. CP-SAT dùng một luồng tìm kiếm, seed 42 và giới hạn 10 giây. Hai cột cuối ghi cặp **(cao điểm, lượt học thứ Bảy)**, đơn vị đều là lượt đăng ký.
 
-## 4. Metrics và mục tiêu
+| Bộ dữ liệu | Chính sách thứ Bảy | Greedy | CP-SAT |
+|---|---|---:|---:|
+| Cơ bản · 8 buổi, 3 phòng | Cho phép, λ = 3 | (120, 0) | (120, 0) |
+| Tải tập trung · 24 buổi, 6 phòng | Cho phép, λ = 3 | (390, 0) | (375, 0) |
+| Đánh đổi thứ Bảy · 4 buổi, 1 phòng | Cho phép, λ = 0 | (100, 200) | (100, 200) |
+| Cùng bộ trên | Cho phép, λ = 3 hoặc 10 | (200, 0) | (200, 0) |
+| Cùng bộ trên | Chỉ học ngày thường | (200, 0) | (200, 0) |
+| Không khả thi · 3 buổi, 2 phòng | Cho phép, λ = 3 | Xếp thiếu buổi | Vô nghiệm |
 
-`L[d,s] = tổng n_c của các buổi ở ngày d, ca s`.
+Ở bộ **Tải tập trung**, cả 24 buổi chỉ được học từ thứ Hai đến thứ Tư. Greedy cho cao điểm 390 lượt. CP-SAT hạ được 15 lượt, còn 375, và chứng minh đây là mức thấp nhất với các phòng và ca đã cho. Ở bộ Cơ bản, hai cách xếp đạt cùng cao điểm.
 
-| Cửa sổ | Lượt rời | Lượt đến | Tổng F |
-|---|---|---|---|
-| Đầu ngày | 0 | L1 | L1 |
-| Ca 1→2 | L1 | L2 | L1+L2 |
-| Ca 2→3 | L2 | L3 | L2+L3 |
-| Ca 3→4 | L3 | L4 | L3+L4 |
-| Cuối ngày | L4 | 0 | L4 |
+Bộ **Đánh đổi thứ Bảy** cho thấy cái giá của việc tránh thứ Bảy. Bốn buổi có cùng sĩ số 100, dùng chung một phòng và chỉ được học thứ Hai hoặc thứ Bảy. Với λ = 0, lịch chia đều hai buổi mỗi ngày, các buổi trong ngày cách nhau ít nhất một ca trống. Cao điểm là 100 lượt. Với λ = 3, cả bốn buổi dồn vào thứ Hai. Lúc một lớp tan và lớp kế tiếp vào học, cao điểm tăng lên 200 lượt. Tăng λ lên 10 cho cùng kết quả.
 
-`P = max F` trên toàn tuần; `N_Sat` là tổng lượt đăng ký các buổi thứ Bảy. Mục tiêu chính: **min J = P + λ × N_Sat**, với λ nguyên không âm. Cấm Sat là hard constraint, còn λ là soft penalty. λ=0 không bắt buộc phải dùng Sat.
+Ở bộ **Không khả thi**, cả ba buổi đều bắt buộc học ca 1 thứ Hai trong khi chỉ có hai phòng. Greedy dừng khi hết phòng. CP-SAT xác nhận không thể xếp đủ cả ba buổi. [Bảng số liệu của 14 lượt chạy](evidence/experiments.csv) · [Lịch từng buổi và cấu hình thực nghiệm](evidence/experiments.json)
 
-Một người học nhiều ca có thể được đếm nhiều lượt. F là tổng theo khoảng thời gian, không phải người xuất hiện cùng một giây, và không đo ùn tắc thực tế. Ghế dư/lấp đầy chỉ được báo cáo, chưa làm tối ưu phụ.
+![Biểu đồ số lượt ra vào theo ngày và khoảng chuyển ca](analysis.png)
 
-## 5. Thuật toán và tích hợp
+*Hình 2. Biểu đồ giúp xác định ngày và khoảng chuyển ca đạt cao điểm của lịch đang xem.*
 
-Greedy sắp buổi theo số lựa chọn hợp lệ, quy mô giảm dần và mã; chọn phương án có mức tăng J thấp nhất trên lịch một phần, rồi tie-break nhất quán. Không quay lui nên có thể thất bại ngay cả khi tồn tại lịch hợp lệ. Khi thiếu buổi, không có metric chất lượng để so với lịch đầy đủ.
+## 4. Kiểm thử và hướng phát triển
 
-CP-SAT có exactly-one/at-most-one, các biến tải và max equality cho P, rồi tối thiểu hóa J. Lịch Greedy hợp lệ có thể làm hint, không phải constraint. Giới hạn tìm kiếm mặc định 10 giây, một worker, seed 42. Sau giải, assignments được validator/metrics kiểm tra lại.
+Bộ kiểm thử đối chiếu công thức tính cao điểm với ví dụ tính tay, so nghiệm CP-SAT với kết quả duyệt hết các lịch của một bài toán nhỏ và kiểm tra quy trình nhập Excel, tạo lịch, xuất kết quả. Lần chạy ngày 28/11/2026 đạt 111/111 bài kiểm thử. Cả 12 lịch đầy đủ trong bảng thực nghiệm cũng vượt qua bước kiểm tra ràng buộc và tính lại chỉ số. [Kết quả pytest](evidence/pytest.txt)
 
-OPTIMAL là đã chứng minh tối ưu; FEASIBLE mới có lịch hợp lệ; INFEASIBLE là không có lịch trong mô hình; UNKNOWN chưa kết luận; MODEL_INVALID là mô hình sai. Runtime còn gồm chuẩn bị/kiểm chứng nên có thể lớn hơn giới hạn tìm kiếm.
-
-## 6. Dữ liệu và thiết kế thực nghiệm
-
-Bộ Basic có 8 buổi/3 phòng, Congestion có 24/6 tập trung Mon–Wed, Saturday trade-off có 4 buổi ×100/1 phòng cho Mon/Sat, Infeasible có 3 buổi cùng Mon/ca1 nhưng 2 phòng. Chạy thêm Weekdays Only để đối chiếu hard constraint.
-
-Runner `python -m application.experiments --time-limit 10 --output reports/experiments` chạy bảy cấu hình và lưu 14 hàng thuật toán, cùng assignments và provenance. Các kết quả này thuộc bản tham khảo chạy bởi trợ lý; nhóm cần lưu lần chạy riêng trên máy của mình khi nhận việc.
-
-## 7. Kết quả thực tế của bản tham khảo
-
-| Case | λ | Ngày học | Thuật toán | Status | P | N_Sat | J | Giây |
-|---|---:|---|---|---|---:|---:|---:|---:|
-| basic | 3 | Mon–Sat | Greedy | FEASIBLE | 120 | 0 | 120 | 0.019 |
-| basic | 3 | Mon–Sat | CP-SAT | OPTIMAL | 120 | 0 | 120 | 0.086 |
-| congestion | 3 | Mon–Sat | Greedy | FEASIBLE | 390 | 0 | 390 | 0.032 |
-| congestion | 3 | Mon–Sat | CP-SAT | OPTIMAL | 375 | 0 | 375 | 1.355 |
-| saturday-lambda-0 | 0 | Mon–Sat | Greedy | FEASIBLE | 100 | 200 | 100 | 0.001 |
-| saturday-lambda-0 | 0 | Mon–Sat | CP-SAT | OPTIMAL | 100 | 200 | 100 | 0.006 |
-| saturday-lambda-3 | 3 | Mon–Sat | Greedy | FEASIBLE | 200 | 0 | 200 | 0.001 |
-| saturday-lambda-3 | 3 | Mon–Sat | CP-SAT | OPTIMAL | 200 | 0 | 200 | 0.007 |
-| saturday-lambda-10 | 10 | Mon–Sat | Greedy | FEASIBLE | 200 | 0 | 200 | 0.001 |
-| saturday-lambda-10 | 10 | Mon–Sat | CP-SAT | OPTIMAL | 200 | 0 | 200 | 0.007 |
-| weekdays-only | 3 | Mon–Fri | Greedy | FEASIBLE | 200 | 0 | 200 | 0.000 |
-| weekdays-only | 3 | Mon–Fri | CP-SAT | OPTIMAL | 200 | 0 | 200 | 0.003 |
-| infeasible | 3 | Mon–Sat | Greedy | FAILED | — | — | — | 0.000 |
-| infeasible | 3 | Mon–Sat | CP-SAT | INFEASIBLE | — | — | — | 0.002 |
-
-Các hàng thất bại/không kết luận giữ metric trống, không thay bằng 0. Greedy FAILED không chứng minh bài toán vô nghiệm. Cần xem `(P, N_Sat)` khi so các λ, vì J đổi công thức. Những kết quả trên không cho phép khái quát CP-SAT luôn nhanh/tốt hơn hoặc giảm ùn tắc tại trường.
-
-Bộ trade-off có chứng minh nhỏ: chia Mon/Sat, mỗi ngày ca 1 và 3, cho P=100 và N_Sat=200. Chỉ Mon buộc dùng bốn ca, cho P=200 và N_Sat=0. λ cao làm phương án ngày thường được ưu tiên theo mục tiêu đã chọn.
-
-## 8. Kiểm thử và UI
-
-Kết quả pytest được lưu nguyên văn trong log: **107 passed in 18.78s**. Có tính tay F/P/J, lỗi Excel, ràng buộc lịch, phản ví dụ Greedy, vét cạn bài nhỏ, timeout thật, import → solve → export, typed workflows và tương tác Streamlit. Chrome kiểm tra lưới/bảng, lọc phòng/ngày, export đủ lịch, heatmap, ba chính sách và màn hình 390 px.
-
-![alt text](schedule.png)
-
-Ảnh lịch: mỗi thẻ là một buổi, màu giữ ổn định theo phòng; mặc định xem tất cả phòng. Mỗi ô ngày–ca có số lớp và tổng lượt đăng ký đang hiển thị để nhận ra các lớp học song song. Các chỉ số toàn tuần không đổi khi lọc.
-
-![alt text](analysis.png)
-
-Ảnh phân tích: mỗi ô thể hiện F theo ngày/cửa sổ; ★ là các ô đạt P. Thanh đối chiếu và lời giải thích dùng số thực; chi tiết kỹ thuật được thu gọn.
-
-## 9. Vai trò AI và đóng góp của nhóm
-
-Mã tham khảo, UI, tests và tài liệu có hỗ trợ đáng kể từ Codex trong hội thoại hiện tại. Không tự nhận phần đó là A–D đã viết hoặc nghiệm thu. Phần kế hoạch giao việc trong vault là việc nhóm cần nhận, đọc, kiểm chứng và ghi bàn giao thực.
-
-[[07_Nhat_ky/AI/AI-001_Ho_tro_Codex]] mới là tóm tắt, chưa có raw transcript đầy đủ. Trước khi nộp, nhóm cần xuất hội thoại gốc, ghi nhận xét/giữ-sửa-bỏ và liên kết việc áp dụng. Không lấy prompt gợi ý hoặc một nhật ký mô phỏng làm tương tác thật.
-
-## 10. Hạn chế và hướng phát triển
-
-Chưa xác minh trên máy nhóm/Windows/macOS trừ khi có biên bản bổ sung. Chưa có dữ liệu thật hay danh tính, giảng viên, lịch nhiều tuần, năng lực cổng/đường đi. Không có lưu trữ bền vững; ghế dư chưa tối ưu riêng. Solver có thể chỉ FEASIBLE hoặc UNKNOWN khi timeout.
-
-Hướng phát triển nên bắt đầu từ khảo sát người dùng/quy tắc thực, sau đó bổ sung dữ liệu và ràng buộc có căn cứ. Lưu lịch sử hoặc mục tiêu phụ chỉ được thêm khi có yêu cầu và kiểm chứng tương ứng. Giữ phân biệt proxy với phép đo thực tế.
-
-## Nguồn và việc còn phải chốt
-
-- [ ] Điền lớp, giảng viên, track/rubric và hạn nộp đã xác nhận.
-- [ ] Bổ sung lần chạy, nhận xét, đóng góp và biên bản của nhóm.
-- [ ] Bổ sung raw transcript AI và rà đủ nguồn.
-- [ ] A xác nhận kỹ thuật, D rà hồ sơ rồi mới coi PDF là bản được duyệt.
+Giới hạn chính của CampusFlow là dữ liệu chỉ có sĩ số từng buổi. Một lịch có thể hợp lệ về phòng nhưng vẫn xếp hai môn của cùng một sinh viên vào một ca. Bước phát triển tiếp theo là bổ sung danh sách nhóm sinh viên học từng môn và lịch bận của giảng viên, rồi dùng các thông tin đó để loại các phương án trùng ca.

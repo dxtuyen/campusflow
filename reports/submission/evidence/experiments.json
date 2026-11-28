@@ -1,0 +1,932 @@
+{
+  "project": "CampusFlow AI",
+  "schema_version": 1,
+  "created_at_utc": "2026-11-28T06:41:14.173342+00:00",
+  "python": "3.14.10",
+  "platform": "Linux-7.3.6-arch1-1-x86_64-with-glibc2.44",
+  "versions": {
+    "campusflow-ai": "0.1.0",
+    "ortools": "9.15.6755",
+    "pandas": "3.1.1",
+    "streamlit": "1.67.0",
+    "plotly": "6.9.0"
+  },
+  "num_workers": 1,
+  "solver_seed": 42,
+  "movement_note": "Class-session event proxy, not unique students or measured campus congestion.",
+  "rows": [
+    {
+      "case_id": "basic",
+      "dataset": "Basic",
+      "class_count": 8,
+      "room_count": 3,
+      "algorithm": "Greedy",
+      "allow_saturday": true,
+      "lambda": 3,
+      "time_limit_seconds": 10,
+      "status": "FEASIBLE",
+      "complete": true,
+      "hard_violations": 0,
+      "P": 120,
+      "N_Sat": 0,
+      "J": 120,
+      "saturday_classes": 0,
+      "unused_seats": 125,
+      "runtime_seconds": 0.013838883998687379,
+      "best_bound": null,
+      "assignments": [
+        {
+          "class_id": "CLS03",
+          "room_id": "A102",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "CLS06",
+          "room_id": "A102",
+          "day": "Mon",
+          "session_id": 3
+        },
+        {
+          "class_id": "CLS01",
+          "room_id": "A102",
+          "day": "Tue",
+          "session_id": 1
+        },
+        {
+          "class_id": "CLS08",
+          "room_id": "A101",
+          "day": "Tue",
+          "session_id": 3
+        },
+        {
+          "class_id": "CLS05",
+          "room_id": "A101",
+          "day": "Wed",
+          "session_id": 1
+        },
+        {
+          "class_id": "CLS02",
+          "room_id": "A101",
+          "day": "Wed",
+          "session_id": 3
+        },
+        {
+          "class_id": "CLS07",
+          "room_id": "A101",
+          "day": "Thu",
+          "session_id": 1
+        },
+        {
+          "class_id": "CLS04",
+          "room_id": "A101",
+          "day": "Wed",
+          "session_id": 2
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "case_id": "basic",
+      "dataset": "Basic",
+      "class_count": 8,
+      "room_count": 3,
+      "algorithm": "CP-SAT",
+      "allow_saturday": true,
+      "lambda": 3,
+      "time_limit_seconds": 10,
+      "status": "OPTIMAL",
+      "complete": true,
+      "hard_violations": 0,
+      "P": 120,
+      "N_Sat": 0,
+      "J": 120,
+      "saturday_classes": 0,
+      "unused_seats": 125,
+      "runtime_seconds": 0.07864903099834919,
+      "best_bound": 120.0,
+      "assignments": [
+        {
+          "class_id": "CLS01",
+          "room_id": "A102",
+          "day": "Tue",
+          "session_id": 1
+        },
+        {
+          "class_id": "CLS02",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 2
+        },
+        {
+          "class_id": "CLS03",
+          "room_id": "A102",
+          "day": "Fri",
+          "session_id": 4
+        },
+        {
+          "class_id": "CLS04",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 3
+        },
+        {
+          "class_id": "CLS05",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 4
+        },
+        {
+          "class_id": "CLS06",
+          "room_id": "A102",
+          "day": "Fri",
+          "session_id": 2
+        },
+        {
+          "class_id": "CLS07",
+          "room_id": "A101",
+          "day": "Thu",
+          "session_id": 1
+        },
+        {
+          "class_id": "CLS08",
+          "room_id": "A101",
+          "day": "Tue",
+          "session_id": 3
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "case_id": "congestion",
+      "dataset": "Congestion",
+      "class_count": 24,
+      "room_count": 6,
+      "algorithm": "Greedy",
+      "allow_saturday": true,
+      "lambda": 3,
+      "time_limit_seconds": 10,
+      "status": "FEASIBLE",
+      "complete": true,
+      "hard_violations": 0,
+      "P": 390,
+      "N_Sat": 0,
+      "J": 390,
+      "saturday_classes": 0,
+      "unused_seats": 195,
+      "runtime_seconds": 0.022631349005678203,
+      "best_bound": null,
+      "assignments": [
+        {
+          "class_id": "CG17",
+          "room_id": "A106",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG11",
+          "room_id": "A106",
+          "day": "Mon",
+          "session_id": 3
+        },
+        {
+          "class_id": "CG01",
+          "room_id": "A105",
+          "day": "Tue",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG21",
+          "room_id": "A105",
+          "day": "Tue",
+          "session_id": 3
+        },
+        {
+          "class_id": "CG07",
+          "room_id": "A105",
+          "day": "Wed",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG20",
+          "room_id": "A104",
+          "day": "Wed",
+          "session_id": 3
+        },
+        {
+          "class_id": "CG13",
+          "room_id": "A104",
+          "day": "Wed",
+          "session_id": 4
+        },
+        {
+          "class_id": "CG02",
+          "room_id": "A104",
+          "day": "Wed",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG18",
+          "room_id": "A104",
+          "day": "Tue",
+          "session_id": 3
+        },
+        {
+          "class_id": "CG16",
+          "room_id": "A102",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG24",
+          "room_id": "A102",
+          "day": "Mon",
+          "session_id": 3
+        },
+        {
+          "class_id": "CG09",
+          "room_id": "A103",
+          "day": "Tue",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG05",
+          "room_id": "A103",
+          "day": "Mon",
+          "session_id": 3
+        },
+        {
+          "class_id": "CG23",
+          "room_id": "A103",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG14",
+          "room_id": "A103",
+          "day": "Wed",
+          "session_id": 3
+        },
+        {
+          "class_id": "CG03",
+          "room_id": "A103",
+          "day": "Tue",
+          "session_id": 2
+        },
+        {
+          "class_id": "CG04",
+          "room_id": "A101",
+          "day": "Wed",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG12",
+          "room_id": "A101",
+          "day": "Wed",
+          "session_id": 2
+        },
+        {
+          "class_id": "CG08",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 3
+        },
+        {
+          "class_id": "CG10",
+          "room_id": "A102",
+          "day": "Tue",
+          "session_id": 4
+        },
+        {
+          "class_id": "CG06",
+          "room_id": "A103",
+          "day": "Tue",
+          "session_id": 4
+        },
+        {
+          "class_id": "CG15",
+          "room_id": "A102",
+          "day": "Tue",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG22",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG19",
+          "room_id": "A101",
+          "day": "Wed",
+          "session_id": 3
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "case_id": "congestion",
+      "dataset": "Congestion",
+      "class_count": 24,
+      "room_count": 6,
+      "algorithm": "CP-SAT",
+      "allow_saturday": true,
+      "lambda": 3,
+      "time_limit_seconds": 10,
+      "status": "OPTIMAL",
+      "complete": true,
+      "hard_violations": 0,
+      "P": 375,
+      "N_Sat": 0,
+      "J": 375,
+      "saturday_classes": 0,
+      "unused_seats": 715,
+      "runtime_seconds": 1.2810109240017482,
+      "best_bound": 375.0,
+      "assignments": [
+        {
+          "class_id": "CG01",
+          "room_id": "A105",
+          "day": "Wed",
+          "session_id": 4
+        },
+        {
+          "class_id": "CG02",
+          "room_id": "A106",
+          "day": "Tue",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG03",
+          "room_id": "A103",
+          "day": "Tue",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG04",
+          "room_id": "A106",
+          "day": "Tue",
+          "session_id": 2
+        },
+        {
+          "class_id": "CG05",
+          "room_id": "A104",
+          "day": "Mon",
+          "session_id": 2
+        },
+        {
+          "class_id": "CG06",
+          "room_id": "A103",
+          "day": "Tue",
+          "session_id": 4
+        },
+        {
+          "class_id": "CG07",
+          "room_id": "A105",
+          "day": "Wed",
+          "session_id": 3
+        },
+        {
+          "class_id": "CG08",
+          "room_id": "A102",
+          "day": "Tue",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG09",
+          "room_id": "A103",
+          "day": "Mon",
+          "session_id": 2
+        },
+        {
+          "class_id": "CG10",
+          "room_id": "A102",
+          "day": "Tue",
+          "session_id": 4
+        },
+        {
+          "class_id": "CG11",
+          "room_id": "A106",
+          "day": "Wed",
+          "session_id": 2
+        },
+        {
+          "class_id": "CG12",
+          "room_id": "A102",
+          "day": "Wed",
+          "session_id": 2
+        },
+        {
+          "class_id": "CG13",
+          "room_id": "A105",
+          "day": "Mon",
+          "session_id": 4
+        },
+        {
+          "class_id": "CG14",
+          "room_id": "A103",
+          "day": "Mon",
+          "session_id": 4
+        },
+        {
+          "class_id": "CG15",
+          "room_id": "A104",
+          "day": "Mon",
+          "session_id": 4
+        },
+        {
+          "class_id": "CG16",
+          "room_id": "A103",
+          "day": "Tue",
+          "session_id": 3
+        },
+        {
+          "class_id": "CG17",
+          "room_id": "A106",
+          "day": "Tue",
+          "session_id": 3
+        },
+        {
+          "class_id": "CG18",
+          "room_id": "A104",
+          "day": "Wed",
+          "session_id": 4
+        },
+        {
+          "class_id": "CG19",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 2
+        },
+        {
+          "class_id": "CG20",
+          "room_id": "A105",
+          "day": "Wed",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG21",
+          "room_id": "A105",
+          "day": "Mon",
+          "session_id": 2
+        },
+        {
+          "class_id": "CG22",
+          "room_id": "A106",
+          "day": "Wed",
+          "session_id": 1
+        },
+        {
+          "class_id": "CG23",
+          "room_id": "A106",
+          "day": "Mon",
+          "session_id": 4
+        },
+        {
+          "class_id": "CG24",
+          "room_id": "A105",
+          "day": "Tue",
+          "session_id": 1
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "case_id": "saturday-lambda-0",
+      "dataset": "Saturday trade-off",
+      "class_count": 4,
+      "room_count": 1,
+      "algorithm": "Greedy",
+      "allow_saturday": true,
+      "lambda": 0,
+      "time_limit_seconds": 10,
+      "status": "FEASIBLE",
+      "complete": true,
+      "hard_violations": 0,
+      "P": 100,
+      "N_Sat": 200,
+      "J": 100,
+      "saturday_classes": 2,
+      "unused_seats": 0,
+      "runtime_seconds": 0.0008249020029325038,
+      "best_bound": null,
+      "assignments": [
+        {
+          "class_id": "SAT1",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "SAT2",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 3
+        },
+        {
+          "class_id": "SAT3",
+          "room_id": "A101",
+          "day": "Sat",
+          "session_id": 1
+        },
+        {
+          "class_id": "SAT4",
+          "room_id": "A101",
+          "day": "Sat",
+          "session_id": 3
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "case_id": "saturday-lambda-0",
+      "dataset": "Saturday trade-off",
+      "class_count": 4,
+      "room_count": 1,
+      "algorithm": "CP-SAT",
+      "allow_saturday": true,
+      "lambda": 0,
+      "time_limit_seconds": 10,
+      "status": "OPTIMAL",
+      "complete": true,
+      "hard_violations": 0,
+      "P": 100,
+      "N_Sat": 200,
+      "J": 100,
+      "saturday_classes": 2,
+      "unused_seats": 0,
+      "runtime_seconds": 0.006509550999908242,
+      "best_bound": 100.0,
+      "assignments": [
+        {
+          "class_id": "SAT1",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "SAT2",
+          "room_id": "A101",
+          "day": "Sat",
+          "session_id": 4
+        },
+        {
+          "class_id": "SAT3",
+          "room_id": "A101",
+          "day": "Sat",
+          "session_id": 1
+        },
+        {
+          "class_id": "SAT4",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 3
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "case_id": "saturday-lambda-3",
+      "dataset": "Saturday trade-off",
+      "class_count": 4,
+      "room_count": 1,
+      "algorithm": "Greedy",
+      "allow_saturday": true,
+      "lambda": 3,
+      "time_limit_seconds": 10,
+      "status": "FEASIBLE",
+      "complete": true,
+      "hard_violations": 0,
+      "P": 200,
+      "N_Sat": 0,
+      "J": 200,
+      "saturday_classes": 0,
+      "unused_seats": 0,
+      "runtime_seconds": 0.0008282830021926202,
+      "best_bound": null,
+      "assignments": [
+        {
+          "class_id": "SAT1",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "SAT2",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 3
+        },
+        {
+          "class_id": "SAT3",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 2
+        },
+        {
+          "class_id": "SAT4",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 4
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "case_id": "saturday-lambda-3",
+      "dataset": "Saturday trade-off",
+      "class_count": 4,
+      "room_count": 1,
+      "algorithm": "CP-SAT",
+      "allow_saturday": true,
+      "lambda": 3,
+      "time_limit_seconds": 10,
+      "status": "OPTIMAL",
+      "complete": true,
+      "hard_violations": 0,
+      "P": 200,
+      "N_Sat": 0,
+      "J": 200,
+      "saturday_classes": 0,
+      "unused_seats": 0,
+      "runtime_seconds": 0.00630268100212561,
+      "best_bound": 200.0,
+      "assignments": [
+        {
+          "class_id": "SAT1",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "SAT2",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 4
+        },
+        {
+          "class_id": "SAT3",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 2
+        },
+        {
+          "class_id": "SAT4",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 3
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "case_id": "saturday-lambda-10",
+      "dataset": "Saturday trade-off",
+      "class_count": 4,
+      "room_count": 1,
+      "algorithm": "Greedy",
+      "allow_saturday": true,
+      "lambda": 10,
+      "time_limit_seconds": 10,
+      "status": "FEASIBLE",
+      "complete": true,
+      "hard_violations": 0,
+      "P": 200,
+      "N_Sat": 0,
+      "J": 200,
+      "saturday_classes": 0,
+      "unused_seats": 0,
+      "runtime_seconds": 0.0008229649974964559,
+      "best_bound": null,
+      "assignments": [
+        {
+          "class_id": "SAT1",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "SAT2",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 3
+        },
+        {
+          "class_id": "SAT3",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 2
+        },
+        {
+          "class_id": "SAT4",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 4
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "case_id": "saturday-lambda-10",
+      "dataset": "Saturday trade-off",
+      "class_count": 4,
+      "room_count": 1,
+      "algorithm": "CP-SAT",
+      "allow_saturday": true,
+      "lambda": 10,
+      "time_limit_seconds": 10,
+      "status": "OPTIMAL",
+      "complete": true,
+      "hard_violations": 0,
+      "P": 200,
+      "N_Sat": 0,
+      "J": 200,
+      "saturday_classes": 0,
+      "unused_seats": 0,
+      "runtime_seconds": 0.006510335995699279,
+      "best_bound": 200.0,
+      "assignments": [
+        {
+          "class_id": "SAT1",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "SAT2",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 4
+        },
+        {
+          "class_id": "SAT3",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 2
+        },
+        {
+          "class_id": "SAT4",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 3
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "case_id": "weekdays-only",
+      "dataset": "Saturday trade-off",
+      "class_count": 4,
+      "room_count": 1,
+      "algorithm": "Greedy",
+      "allow_saturday": false,
+      "lambda": 3,
+      "time_limit_seconds": 10,
+      "status": "FEASIBLE",
+      "complete": true,
+      "hard_violations": 0,
+      "P": 200,
+      "N_Sat": 0,
+      "J": 200,
+      "saturday_classes": 0,
+      "unused_seats": 0,
+      "runtime_seconds": 0.0003758650054805912,
+      "best_bound": null,
+      "assignments": [
+        {
+          "class_id": "SAT1",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "SAT2",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 3
+        },
+        {
+          "class_id": "SAT3",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 2
+        },
+        {
+          "class_id": "SAT4",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 4
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "case_id": "weekdays-only",
+      "dataset": "Saturday trade-off",
+      "class_count": 4,
+      "room_count": 1,
+      "algorithm": "CP-SAT",
+      "allow_saturday": false,
+      "lambda": 3,
+      "time_limit_seconds": 10,
+      "status": "OPTIMAL",
+      "complete": true,
+      "hard_violations": 0,
+      "P": 200,
+      "N_Sat": 0,
+      "J": 200,
+      "saturday_classes": 0,
+      "unused_seats": 0,
+      "runtime_seconds": 0.0031557490001432598,
+      "best_bound": 200.0,
+      "assignments": [
+        {
+          "class_id": "SAT1",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 2
+        },
+        {
+          "class_id": "SAT2",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 4
+        },
+        {
+          "class_id": "SAT3",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "SAT4",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 3
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "case_id": "infeasible",
+      "dataset": "Infeasible",
+      "class_count": 3,
+      "room_count": 2,
+      "algorithm": "Greedy",
+      "allow_saturday": true,
+      "lambda": 3,
+      "time_limit_seconds": 10,
+      "status": "FAILED",
+      "complete": false,
+      "hard_violations": 1,
+      "P": null,
+      "N_Sat": null,
+      "J": null,
+      "saturday_classes": null,
+      "unused_seats": null,
+      "runtime_seconds": 0.00013484599912771955,
+      "best_bound": null,
+      "assignments": [
+        {
+          "class_id": "INF1",
+          "room_id": "A101",
+          "day": "Mon",
+          "session_id": 1
+        },
+        {
+          "class_id": "INF2",
+          "room_id": "A102",
+          "day": "Mon",
+          "session_id": 1
+        }
+      ],
+      "warnings": [
+        "Greedy failed to find complete schedule: không xếp được INF3. Không chứng minh bài toán vô nghiệm."
+      ]
+    },
+    {
+      "case_id": "infeasible",
+      "dataset": "Infeasible",
+      "class_count": 3,
+      "room_count": 2,
+      "algorithm": "CP-SAT",
+      "allow_saturday": true,
+      "lambda": 3,
+      "time_limit_seconds": 10,
+      "status": "INFEASIBLE",
+      "complete": false,
+      "hard_violations": null,
+      "P": null,
+      "N_Sat": null,
+      "J": null,
+      "saturday_classes": null,
+      "unused_seats": null,
+      "runtime_seconds": 0.0015618079996784218,
+      "best_bound": null,
+      "assignments": [],
+      "warnings": [
+        "Không tồn tại lịch thỏa tất cả ràng buộc theo chính sách hiện tại. Chưa xác định chính xác tập ràng buộc gây mâu thuẫn."
+      ]
+    }
+  ]
+}
