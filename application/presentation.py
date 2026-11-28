@@ -7,10 +7,10 @@ import plotly.graph_objects as go
 from application.models import DAY_LABELS, DAYS, TIMES, WINDOWS
 
 SAMPLE_LABELS = {
-    "Basic": "Cơ bản · 8 buổi, 3 phòng",
-    "Congestion": "Tải tập trung · 24 buổi, 6 phòng",
-    "Saturday trade-off": "Đánh đổi thứ Bảy · 4 buổi, 1 phòng",
-    "Infeasible": "Không khả thi · 3 buổi, 2 phòng",
+    "Basic": "Cơ bản",
+    "Congestion": "Tải tập trung",
+    "Saturday trade-off": "Đánh đổi thứ Bảy",
+    "Infeasible": "Không khả thi",
 }
 WINDOW_LABELS = {"Morning": "Đầu ngày", "1→2": "Ca 1 → 2", "2→3": "Ca 2 → 3", "3→4": "Ca 3 → 4", "Evening": "Cuối ngày"}
 WINDOW_TIMES = {"Morning": "Trước 07:00", "1→2": "09:30–10:00", "2→3": "12:30–13:30", "3→4": "16:00–16:30", "Evening": "Sau 19:00"}
@@ -50,8 +50,8 @@ def timetable_grid_html(frame, days, room_ids=None):
     .cf-class { padding: 9px; border-left: 4px solid; border-radius: 7px; }
     .cf-class + .cf-class { margin-top: 7px; }
     .cf-slot-summary { margin-bottom: 7px; color: #38574c; font-size: .75rem; font-weight: 600; }
-    .cf-class strong { display: block; font-size: .8rem; }
-    .cf-class-name { font-size: .9rem; line-height: 1.35; font-weight: 600; margin: 5px 0; }
+    .cf-class small { display: block; margin-top: 3px; }
+    .cf-class-name { font-size: .9rem; line-height: 1.35; font-weight: 600; }
     .cf-empty { color: #74857c; }
     </style>"""]
     parts.append('<div class="cf-grid" role="region" aria-label="Lưới lịch học" tabindex="0">')
@@ -66,13 +66,13 @@ def timetable_grid_html(frame, days, room_ids=None):
             css = ' class="cf-saturday"' if day == "Sat" else ""
             parts.append(f"<td{css}>")
             rows = frame[(frame.day == day) & (frame.session_id == session)]
-            if not rows.empty:
+            if len(rows) > 1:
                 parts.append(f'<div class="cf-slot-summary">{len(rows)} lớp · {int(rows.students.sum()):,} lượt đăng ký</div>')
             for row in rows.itertuples(index=False):
                 background, border = colors[row.room_id]
-                parts.append(f'<div class="cf-class" data-room="{escape(str(row.room_id), quote=True)}" style="background:{background};border-left-color:{border}"><strong>{escape(str(row.class_id))}</strong>'
+                parts.append(f'<div class="cf-class" data-room="{escape(str(row.room_id), quote=True)}" style="background:{background};border-left-color:{border}">'
                              f'<div class="cf-class-name">{escape(str(row.class_name))}</div>'
-                             f'<small>{escape(str(row.room_id))} · {row.students:,} lượt</small></div>')
+                             f'<small>{escape(str(row.class_id))} · {escape(str(row.room_id))} · {row.students:,} lượt</small></div>')
             if rows.empty:
                 parts.append('<span class="cf-empty" aria-label="Không có buổi học">—</span>')
             parts.append("</td>")

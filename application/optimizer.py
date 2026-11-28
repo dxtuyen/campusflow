@@ -15,7 +15,7 @@ def solve_cp_sat(classes, rooms, config) -> ScheduleResult:
     start = perf_counter()
     require_valid_inputs(classes, rooms)
     total = sum(c.students for c in classes)
-    # Leave ample headroom for CP-SAT's signed int64 expression/domain checks.
+
     if total * (config.saturday_penalty + 2) > 2**60:
         return ScheduleResult(
             "CP-SAT",

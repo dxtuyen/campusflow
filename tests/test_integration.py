@@ -1,4 +1,7 @@
 from io import BytesIO
+from xml.etree import ElementTree
+from zipfile import ZipFile
+
 import pandas as pd
 import pytest
 
@@ -29,6 +32,44 @@ def test_optional_columns_default(basic):
     classes, rooms = dataset_frames(basic)
     result = read_dataset(workbook(classes.drop(columns=CLASS_COLUMNS[3:]), rooms))
     assert result.classes == basic.classes
+
+
+@pytest.mark.parametrize("column, formula", [("allowed_days", '="Sat"'), ("allowed_sessions", "=4")])
+def test_uncalculated_constraint_rejected_with_location(basic, column, formula):
+    classes, rooms = dataset_frames(basic)
+    classes.loc[0, column] = formula
+    with pytest.raises(DatasetError, match=f"Classes, dòng 2, {column}: công thức"):
+        read_dataset(workbook(classes, rooms))
+
+
+def test_excel_error_in_constraint_rejected(basic):
+    classes, rooms = dataset_frames(basic)
+    classes.loc[0, "allowed_days"] = "#REF!"
+    with pytest.raises(DatasetError, match="Classes, dòng 2, allowed_days.*#REF!"):
+        read_dataset(workbook(classes, rooms))
+
+
+def test_cached_constraints_and_empty_cells(basic):
+    classes, rooms = dataset_frames(basic)
+    classes.loc[0, ["allowed_days", "allowed_sessions"]] = ['="Sat"', "=4"]
+    classes.loc[1, ["allowed_days", "allowed_sessions"]] = ["", ""]
+    # openpyxl writes formulas but cannot calculate them. Supply Excel's cached results.
+    cached = BytesIO()
+    with ZipFile(workbook(classes, rooms)) as original, ZipFile(cached, "w") as updated:
+        for entry in original.infolist():
+            content = original.read(entry)
+            if entry.filename == "xl/worksheets/sheet1.xml":
+                sheet = ElementTree.fromstring(content)
+                for address, kind, value in (("D2", "str", "Sat"), ("E2", "n", "4")):
+                    cell = sheet.find(f".//{{*}}c[@r='{address}']")
+                    cell.set("t", kind)
+                    cell.find("{*}v").text = value
+                content = ElementTree.tostring(sheet)
+            updated.writestr(entry, content)
+    result = read_dataset(cached)
+    assert result.classes[0].allowed_days == ("Sat",)
+    assert result.classes[0].allowed_sessions == (4,)
+    assert result.classes[1] == basic.classes[1]
 
 
 @pytest.mark.parametrize("column,value", [("class_id", ""), ("class_name", ""), ("students", "bad"), ("students", 1.5), ("students", -1), ("allowed_days", "Mon,Sun"), ("allowed_days", "Mon,"), ("allowed_sessions", "1,5"), ("allowed_sessions", "1,x")])
