@@ -31,30 +31,14 @@ def show_metrics(result: ScheduleResult) -> None:
     cols[3].metric("Lấp đầy phòng", f"{m.room_utilization:.1%}", help="Tổng lượt đăng ký / tổng sức chứa phòng ở các buổi được xếp.")
 
 
-def show_overview(result: ScheduleResult) -> None:
-    a, b, c = st.columns(3)
-    a.metric("Buổi học đã xếp", len(result.assignments))
-    b.metric("Lượt di chuyển cao nhất", f"{result.metrics.peak_movement:,}", help="Lượt ra + vào trong một khoảng thời gian, tính trên toàn tuần.")
-    c.metric("Buổi học thứ Bảy", result.metrics.saturday_classes)
-
-
 def render_shell() -> None:
     with st.sidebar:
-        st.markdown("### 🌿 CampusFlow AI")
-        st.caption("PHÂN PHÒNG & ĐIỀU PHỐI CA HỌC")
-        st.divider()
-        st.markdown("**Một tuần mẫu. Bốn ca cố định.**")
+        st.subheader("Giờ học")
         for session, (start, end) in TIMES.items():
-            st.write(f"Ca {session}　{start} — {end}")
-        st.caption("150 phút / ca · Chủ nhật luôn nghỉ")
-        st.divider()
-        st.markdown("**Bắt đầu trong 3 bước**")
-        st.write("1. Chọn dữ liệu hoặc tải Excel.\n2. Chọn chính sách, tạo và so sánh lịch.\n3. Đọc biểu đồ và thử các mức λ.")
-        with st.expander("Mô hình này đo gì?"):
-            st.write("Mỗi bản ghi là một buổi học trong tuần. Các chỉ số đếm lượt đăng ký lớp, không phải số sinh viên duy nhất.")
-            st.write("Nhiều lớp có thể học cùng ca ở các phòng khác nhau; tải của ca cộng lượt đăng ký từ tất cả các lớp đó.")
-            st.write("Không xét lịch cá nhân, giảng viên, đường đi hay sức chứa cổng. Một người học nhiều ca có thể bị đếm nhiều lượt.")
-            st.caption("Đây là chỉ số đại diện từ lịch lớp, không phải dữ liệu đo ùn tắc thực tế.")
+            st.write(f"Ca {session}　{start} – {end}")
+        st.caption("Áp dụng từ thứ Hai đến thứ Bảy.")
+        with st.expander("Cách tính lượt di chuyển"):
+            st.write("Mỗi lượt đăng ký được tính một lần khi vào ca và một lần khi rời ca. Một sinh viên học nhiều ca có thể được tính nhiều lượt.")
+            st.caption("Mô hình dùng lịch lớp và sức chứa phòng. Lịch cá nhân, giảng viên và lưu lượng đo tại cổng nằm ngoài phạm vi tính.")
 
     st.title("CampusFlow AI")
-    st.caption("Chọn dữ liệu → Tạo lịch → Xem cao điểm di chuyển")

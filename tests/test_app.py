@@ -21,7 +21,8 @@ def load_sample_ui(at, name):
 def test_start_generate_compare_and_export_widgets():
     at = app()
     assert not at.exception
-    assert [tab.label for tab in at.tabs] == ["Dữ liệu", "Lịch học", "Phân tích AI"]
+    assert [tab.label for tab in at.tabs[0].tabs] == ["Nhập Excel", "Bộ mẫu", "Giả lập"]
+    assert {tab.label for tab in at.tabs} >= {"Dữ liệu", "Lịch học", "Phân tích"}
     assert at.session_state.dataset.name == "Basic"
     at.button(key="generate").click().run()
     assert not at.exception
@@ -69,6 +70,9 @@ def test_what_if_runs_on_selected_data_and_is_invalidated():
     assert not at.exception
     results = at.session_state.what_if.results
     assert [r.metrics.peak_movement for _, r in results] == [100, 200, 200]
+    table = next(frame.value for frame in at.dataframe if "Mức phạt" in frame.value.columns)
+    assert list(table["Mức phạt"]) == [0, 3, 10]
+    assert list(table["Cao điểm"]) == [100, 200, 200]
     at.multiselect(key="what_if_levels").set_value([0, 1]).run()
     assert at.button(key="what_if_button").disabled
     load_sample_ui(at, "Basic")
@@ -96,13 +100,25 @@ def test_synthetic_preview_use_optimize_same_workflow():
 
 def test_synthetic_impossible_guarantee_has_actionable_error():
     at = app()
-    at.number_input(key="synthetic_classes").set_value(100)
     at.number_input(key="synthetic_rooms").set_value(2)
     at.checkbox(key="synthetic_guarantee").check()
+    at.button(key="synthetic_generate").click().run()
+    assert "synthetic" in at.session_state
+    at.number_input(key="synthetic_classes").set_value(100)
     at.button(key="synthetic_generate").click().run()
     assert not at.exception
     assert any("Không đủ slot" in error.value for error in at.error)
     assert at.session_state.dataset.name == "Basic"
+    assert "synthetic" not in at.session_state
+    assert all(button.key != "synthetic_use" for button in at.button)
+    assert all(button.label != "↓ Tải Excel vừa sinh" for button in at.get("download_button"))
+
+    at.number_input(key="synthetic_rooms").set_value(100)
+    at.button(key="synthetic_generate").click().run()
+    assert not at.exception and not at.error
+    assert len(at.session_state.synthetic.dataset.rooms) == 100
+    at.button(key="synthetic_use").click().run()
+    assert len(at.session_state.dataset.rooms) == 100
 
 
 def test_chart_day_filter_and_weekdays_only_data():

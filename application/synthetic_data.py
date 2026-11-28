@@ -17,6 +17,9 @@ from application.models import (
 )
 from application.validation import require_valid_inputs, validate_schedule
 
+MIN_ROOMS = 2
+MAX_ROOMS = 100
+
 
 @dataclass(frozen=True)
 class GeneratedDataset:
@@ -52,8 +55,8 @@ def generate_synthetic_dataset(
     """
     if type(num_classes) is not int or not 10 <= num_classes <= 100:
         raise ValueError("num_classes phải là số nguyên từ 10 đến 100.")
-    if type(num_rooms) is not int or not 2 <= num_rooms <= 50:
-        raise ValueError("num_rooms phải là số nguyên từ 2 đến 20.")
+    if type(num_rooms) is not int or not MIN_ROOMS <= num_rooms <= MAX_ROOMS:
+        raise ValueError(f"num_rooms phải là số nguyên từ {MIN_ROOMS} đến {MAX_ROOMS}.")
     if type(seed) is not int:
         raise ValueError("seed phải là số nguyên.")
     if difficulty not in ("easy", "constrained"):

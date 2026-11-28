@@ -74,6 +74,33 @@ def _tokens(value, defaults, label, converter=str):
     return tuple(dict.fromkeys(values))
 
 
+def _check_constraint_cells(source, classes_frame):
+    """Distinguish empty restrictions from Excel errors and formulas without cached values."""
+    constraints = {"allowed_days", "allowed_sessions"} & set(classes_frame.columns)
+    if not constraints:
+        return
+    errors = []
+    with pd.ExcelFile(source, engine="openpyxl", engine_kwargs={"data_only": False}) as book:
+        sheet = book.book["Classes"]
+        sheet.reset_dimensions()
+        rows = sheet.iter_rows()
+        columns = [(i, cell.value) for i, cell in enumerate(next(rows, ())) if cell.value in constraints]
+        for row_number, row in enumerate(rows, 2):
+            for index, name in columns:
+                if index >= len(row):
+                    continue
+                cell = row[index]
+                if cell.data_type == "e":
+                    errors.append(f"Classes, dòng {row_number}, {name}: ô Excel chứa lỗi {cell.value}.")
+                elif cell.data_type == "f" and not _text(classes_frame[name].get(row_number - 2)):
+                    errors.append(
+                        f"Classes, dòng {row_number}, {name}: công thức thiếu kết quả hợp lệ. "
+                        "Hãy tính lại và lưu file hoặc dán giá trị ngày/ca trước khi tải lên."
+                    )
+    if errors:
+        raise DatasetError(errors)
+
+
 def read_dataset(source, name: str = "Excel upload") -> Dataset:
     """Reject the entire workbook on any bad row; never silently discard rows."""
     try:
@@ -82,6 +109,7 @@ def read_dataset(source, name: str = "Excel upload") -> Dataset:
             if missing:
                 raise DatasetError([f"Thiếu sheet: {', '.join(sorted(missing))}."])
             frames = {s: pd.read_excel(book, sheet_name=s, dtype=object, keep_default_na=False) for s in ("Classes", "Rooms")}
+        _check_constraint_cells(source, frames["Classes"])
     except DatasetError:
         raise
     except Exception as exc:

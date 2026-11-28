@@ -19,7 +19,7 @@ def main() -> None:
     initialize_state()
     render_shell()
     data_tab, schedule_tab, analysis_tab = st.tabs(
-        ["Dữ liệu", "Lịch học", "Phân tích AI"]
+        ["Dữ liệu", "Lịch học", "Phân tích"], key="main_tab", on_change="rerun"
     )
     with data_tab:
         dataset, errors = render_data_tab()
@@ -27,10 +27,6 @@ def main() -> None:
         config = render_schedule_tab(dataset, errors)
     with analysis_tab:
         render_analysis_tab(dataset, config, errors)
-    st.divider()
-    st.caption(
-        "CampusFlow AI · Một tuần mẫu · Không xét lịch cá nhân hay giảng viên · Một người học nhiều ca có thể được đếm nhiều lượt"
-    )
 
 
 if __name__ == "__main__":

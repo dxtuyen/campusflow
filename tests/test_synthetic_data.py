@@ -54,13 +54,17 @@ def test_guaranteed_slot_capacity_boundary():
         generate_synthetic_dataset(49, 2, guaranteed_feasible=True)
 
 
+@pytest.mark.parametrize("num_rooms", [1, 101])
+def test_room_limit_error_matches_supported_range(num_rooms):
+    with pytest.raises(ValueError, match="từ 2 đến 100"):
+        generate_synthetic_dataset(num_rooms=num_rooms)
+
+
 @pytest.mark.parametrize(
     "kwargs",
     [
         {"num_classes": 9},
         {"num_classes": 101},
-        {"num_rooms": 1},
-        {"num_rooms": 101},
         {"seed": 1.5},
         {"difficulty": "bad"},
         {"guaranteed_feasible": "yes"},

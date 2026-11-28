@@ -25,7 +25,7 @@ def test_grid_preserves_parallel_classes_rooms_and_empty_slots():
     assert "07:00–09:30" in html and "16:30–19:00" in html
     assert 'class="cf-saturday"' in html
     assert 'aria-label="Không có buổi học"' in html
-    assert all(html.count(f"<strong>{a.class_id}</strong>") == 1 for a in assignments)
+    assert all(html.count(f"<small>{a.class_id} · {a.room_id} ·") == 1 for a in assignments)
     saturday = timetable_grid_html(frame[frame.day == "Sat"], ("Sat",))
     assert "Thứ Hai" not in saturday and "CLS03" in saturday and "CLS01" not in saturday
 
